@@ -1,11 +1,11 @@
 # -*- coding: cp1254 -*-
-import urllib2,os,urllib
+import urllib2,os,urllib,re
 
 folroot="./Animeler/"
 anime="Naruto Shippuuden"
 root="http://www.turkanime.tv/"
-
-bolumlist_url="http://www.turkanime.tv/icerik/bolumler&ID=76"
+AID="76"#Bu Kod Naruto için IDFinder.py ile başka animelerin ID'sini bulabilirsiniz
+bolumlist_url="http://www.turkanime.tv/icerik/bolumler&ID="+AID
 bolumlist=[]
 
 def create_folder_and_write_file(bol_string,link_string):
@@ -22,14 +22,12 @@ def get_bolumlist():
     bolumlist.remove("")
     
 def get_vklink(link):
- 
+    
     vk_links={}
     kalite=["720","480","360","240"]
     vklink_read=urllib2.urlopen(root+link).read()
     a=vklink_read.split("""','#video');"><i class="icon-play"></i> VK</a>""")
-    if len(a)==3:
-        pass
-    else:
+    if True:
         print root+link
         a=a[0]
         b=a.split("&video=")[-1]
@@ -58,17 +56,16 @@ def get_vklink(link):
                 vklink_mp4=sp[1].split('","')[0]
                 vklink_mp4=vklink_mp4.replace("\\", "")
                 print "-"*80
-                print "-"*80
                 print x
                 print vklink_mp4
-
-##        
-##        link_stirng=vklink_mp4
-##        bol_string=link.split("/")[1]
-##        
-##        create_folder_and_write_file(bol_string,link_stirng)
-##        #vk_links[k]=vklink_mp4
+                print "-"*80
 
 get_bolumlist()
-
-get_vklink(bolumlist[0])
+for i,x in enumerate(bolumlist):
+    try:
+        _re=re.search('(-\d+-\d+-|-\d+-)',x)
+        n=_re.group(1)
+        print str(i)+" : "+n[1:-1]
+    except:pass
+num=raw_input(">>>")
+get_vklink(bolumlist[int(num)])
