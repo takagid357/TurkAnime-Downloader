@@ -2,7 +2,7 @@ import httpx,os,re
 
 class TurkAnime:
     
-    url="http://www.turkanime.tv/arama"
+    url="http://www.turkanime.tv/"
     cookies = {
         '__cfduid': 'deb9e04ac510c1b707412b1fd7daadec91564216182',
         'yew490': '1',
@@ -32,12 +32,23 @@ class TurkAnime:
         data = {
         'arama': ara
         }
-        veri=httpx.post(self.url, headers=self.headers, cookies=self.cookies, data=data).content.decode("utf8")
+        veri=httpx.post(self.url+"/arama", headers=self.headers, cookies=self.cookies, data=data).content.decode("utf8")
         liste=[]
         r=re.findall('<div class="panel-ust-ic"><div class="panel-title"><a href="\/\/www\.turkanime\.tv\/anime\/(.*?)" (.*?)>(.*?)<\/a>',veri)
         for slug,_,title in r:
             liste.append([title,slug])
         return liste
+    def bolumler(self,slug):
+        veri=httpx.get(self.url+"/anime/"+slug, headers=self.headers, cookies=self.cookies).content.decode("utf8")
+        h=self.headers.copy()
+        h.update({"X-Requested-With":"XMLHttpRequest","Accept":"*/*"})
+        animeId=veri.split("ajax/bolumler&animeId=")[1].split('"')[0]
+        liste=[]
+        a=httpx.get(f"http://www.turkanime.tv/ajax/bolumler&animeId={animeId}",headers=h,cookies=self.cookies).content.decode("utf8")
+        r=re.findall('<a href="\/\/www\.turkanime\.tv\/video\/(.*?)" (.*?)><span class="bolumAdi">(.*?)<\/span><\/a>',a)
+        for slug,_,title in r:
+            liste.append([title,slug])
+        return liste
 if __name__=="__main__":
     t=TurkAnime()
-    t.anime_ara("naruto")
+    print(t.bolumler("naruto"))
