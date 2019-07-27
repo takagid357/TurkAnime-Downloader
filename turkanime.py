@@ -27,7 +27,7 @@ class TurkAnime:
  
     def __init__(self):
         pass
-    def ara(self,ara):
+    def anime_ara(self,ara):
         
         data = {
         'arama': ara
@@ -40,4 +40,4 @@ class TurkAnime:
         return liste
 if __name__=="__main__":
     t=TurkAnime()
-    t.ara("naruto")
+    t.anime_ara("naruto")
